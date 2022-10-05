@@ -1,0 +1,173 @@
+<html>
+
+    <head>
+        <style>
+
+                div{
+                    border-style: solid;
+                    border-width: 1px;
+                    border-color: blue;
+                    border-bottom-style: none;
+                   
+                }
+
+                #container{
+                    
+                }
+
+                .produto{   
+
+                }
+
+                .ultima{
+                   border-bottom-style:solid ;
+                   border-color: blue;
+                   border-width:1px ; 
+                }
+
+                #formulario{
+                    display: flex;
+                    justify-content: center;
+                }
+        </style>
+ 
+        <script>
+
+                let produtos=[]
+ 
+                async function listar(){
+
+                    //buscar da API
+                    const res = await fetch ("http://127.0.0.1:3000/produtos")
+                         
+                    produtos  =   await  res.json()
+                   
+                     
+                    let divs =""
+
+                    //2) percorrer o array e criar um html para cada produto
+                    for (i=0;i<produtos.length;i++){
+
+                        divs=divs+ vestirHTML(produtos[i])
+                    }
+                    //3) imprimir o html gerado
+                    document.getElementById("lista").innerHTML=divs
+                        
+                    
+
+
+                   
+                }
+
+
+                function buscar(palavra){
+
+                    for (i=0;i<produtos.length; i++){
+
+                        if (produtos[i].descricao==palavra){
+
+                        
+                           return  vestirHTML(produtos[i])
+                        }
+                    }
+
+                 return "produto nao encontrado"
+                }
+
+                function vestirHTML(p){
+                   return `<div class="produto" >
+                            <img width="50" src="${p.imagem}"/>
+                            ${p.descricao}
+                            R$ ${p.preco}
+                        </div>`
+                }
+
+                function adicionarLista(conteudo){
+                    document.getElementById("lista").innerHTML=conteudo
+                }
+
+                //chamar no console adicionarLista( buscar("Suco de Laranja") )
+               async function aoClicar(){
+                    //1)Ler todos os campos
+                    let campoDescricao = document.getElementById("campoDescricao").value
+                    let campoPreco =  document.getElementById("campoPreco").value
+                    let campoImagem =  document.getElementById("campoImagem").value
+                    //2// Valida
+                    if (campoDescricao==""){
+
+                        window.alert("Campo Descrição é obrigatório!")
+                   
+                    }else if (campoPreco==""){
+
+                        window.alert("Campo Preço é obrigatório!")
+                  
+                    }else if (campoImagem==""){
+                        window.alert("Campo Imagem é obrigatório!")
+                   
+                    }else{
+
+                       //Montar objeto com os dados dos campos
+                        let produto= {
+                            descricao:campoDescricao,
+                            preco:campoPreco,
+                            imagem:campoImagem
+                        }
+                       //enviar pra API via POST
+
+                       let response = await fetch ("http://127.0.0.1:3000/produtos", 
+                       { 
+                            method:'POST',
+                            headers:{
+                                'Content-Type':'application/json'
+                            },
+                            body:JSON.stringify(produto)
+                       } )
+                       //Imprimindo a resposta da rota post no console
+                     let json = await response.json()
+                     //adicionarn no array local o item cadastrado
+                     produtos.push(json)
+
+                     //incluir no html 
+                    novoItem =  vestirHTML(json)
+
+                    //Adicionar no HTML
+                    document.getElementById("lista").innerHTML+=novoItem
+
+                  
+                    }
+                     //Recarregar a tela (listar)
+                     //listar()
+                    
+                }
+               
+        </script>
+
+      
+
+    </head>
+
+    <body onload="listar()">
+
+        <div id="container">
+            <div id="formulario">
+
+                    <div><input id="campoDescricao" placeholder="Descrição"/></div>
+                    <div><input id="campoPreco" placeholder="Preço"/></div>
+                    <div><input id="campoImagem" placeholder="Link da imagem"/></div>
+                    <div><button onclick="aoClicar()">Adicionar</button></div>
+            </div>
+
+            <div id="lista">
+                    
+            </div>
+
+        </div>
+
+        
+
+        
+
+    </body>
+
+</html>
+

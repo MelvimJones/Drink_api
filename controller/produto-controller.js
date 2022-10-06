@@ -1,35 +1,14 @@
-let produtos =[]
-/*
-//Trazer no banco
-//----Conectando com o banco -----//
-async function init(){
-    const mongoose = require('mongoose');
-    mongoose.connect('mongodb+srv://admin:BuAzY37256fps3t2@cluster0.3yotkzw.mongodb.net/drinkht?retryWrites=true&w=majority');
-
-    //Criando um Schema ("collection")
-
-    const ProdutoSchema = new mongoose.Schema( { descricao:String, preco: Number, imagem: String} )
-
-    // Criando o Modelo
-    const Produto = mongoose.model ("produto",ProdutoSchema )
-
-    //Busca na collecao de produtos
-     produtos = await Produto.find({})
-
-    console.log(produtos) 
-}
-
-// ----------------- REPOSITORY------------------
-init()
-
-           */                     
-
+//Carreggar o model de produtos
+const produto =  require("../model/produto")
 
 //-------------# Funções controller ------------------
 
-function listaProdutos(req, res){
+async function listaProdutos(req, res){
    
-    res.json(produtos)
+        //Buscar no banco
+       const produtos = await produto.find({})
+
+       res.json(produtos)
 
 }
 

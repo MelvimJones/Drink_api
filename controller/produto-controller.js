@@ -1,46 +1,46 @@
 //Carreggar o model de produtos
-const produto =  require("../model/produto")
+const Produto =  require("../model/produto")
 
 //-------------# Funções controller ------------------
 
 async function listaProdutos(req, res){
    
         //Buscar no banco
-       const produtos = await produto.find({})
+       const produtos = await Produto.find({})
 
        res.json(produtos)
 
 }
 
-function cadastraProduto(req, res){
-   
+async function cadastraProduto(req, res){
+   //montando objeto com os dados
+     let prod = new Produto(req.body)
     //incluindo objeto no array
-     produtos.push(req.body) 
+     prodSalvo= await  prod.save() ;
      //devolvendo um json de resposta para o client 
-     res.json(req.body)
+     res.json(prodSalvo)
     // res.json({mensagem:"cadastrado com sucesso"}) 
  }
 
-function deleteProduto(req, res){
+async function deleteProduto(req, res){
 
    
 
-        let indice =  req.query.i
-        produtos.splice(indice,1)
-     
+        let id =  req.query.id
         
+        await Produto.findByIdAndRemove(id)
+
          res.status(200)
-         res.send("removido indice:"+ indice)
+         res.send("removido indice:"+ id)
      
 }
-
-function alteraProduto(req, res){
+async function alteraProduto(req, res){
     
-        let indice = req.query.i
-        let produto =  req.body
+        let id = req.query.id
+        let prod =  req.body
     
-        produtos[indice] = produto
-        res.send("Alterado com sucesso")
+         await Produto.findByIdAndUpdate(id, prod)
+        res.send("Alterado com sucesso: " )
     
 }
 
